@@ -1,13 +1,9 @@
-package com.backend.reservations.entity;
+package com.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-
-import com.backend.review.entity.Review;
-import com.backend.rooms.entity.Room;
-import com.backend.users.entity.User;
 
 @Entity
 @Table(name = "reservations")

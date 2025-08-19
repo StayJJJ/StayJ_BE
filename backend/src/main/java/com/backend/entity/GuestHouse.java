@@ -1,9 +1,6 @@
-package com.backend.guesthouses.entity;
+package com.backend.entity;
 
 import java.util.List;
-
-import com.backend.rooms.entity.Room;
-import com.backend.users.entity.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
