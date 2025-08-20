@@ -11,7 +11,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -40,7 +39,7 @@ public class User {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "host")
-    private List<GuestHouse> guesthouses;
+    private List<Guesthouse> guesthouses;
 
     @OneToMany(mappedBy = "guest")
     private List<Reservation> reservations;
