@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import com.backend.entity.Guesthouse;
 
-public interface GuesthouseRepository extends JpaRepository<Guesthouse, Long> {
+public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer> {
 
 	interface GuesthouseSummary {
-        Long getId();
+        Integer getId();
         String getName();
         Integer getRoomCount();
         Double getRating();
@@ -22,6 +22,6 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Long> {
         from Guesthouse g
         where g.host.id = :hostId
     """)
-    List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Long hostId);
+    List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Integer hostId);
 	
 }

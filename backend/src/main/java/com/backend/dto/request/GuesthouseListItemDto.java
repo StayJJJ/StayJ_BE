@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GuesthouseListItemDto {
-    private Long id;
+    private Integer id;
     private String name;
     
     @JsonProperty("room_count")
