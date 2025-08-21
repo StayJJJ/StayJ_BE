@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -23,6 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+
 public class Guesthouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +54,7 @@ public class Guesthouse {
 
     @Column(name = "room_count")
     private Integer roomCount;
-
+    
     // Relationships
     @OneToMany(mappedBy = "guestHouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
