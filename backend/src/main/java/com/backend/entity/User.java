@@ -2,6 +2,8 @@ package com.backend.entity;
 
 import java.util.List;
 
+import com.backend.dto.response.UserInfoDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -47,4 +49,20 @@ public class User {
 
     @OneToMany(mappedBy = "guest")
     private List<Reservation> reservations;
+    
+    public void updateUserInfo(String username, String phoneNumber, String password) {
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.password = password; // 암호화는 Service 단에서
+    }
+    
+    public UserInfoDto toDto() {
+        return new UserInfoDto(
+                this.id,
+                this.username,
+                this.loginId,
+                this.role,
+                this.phoneNumber
+        );
+    }
 }

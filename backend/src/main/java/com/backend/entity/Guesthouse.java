@@ -29,7 +29,7 @@ import lombok.Setter;
 public class Guesthouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
@@ -54,7 +54,7 @@ public class Guesthouse {
 
     @Column(name = "room_count")
     private Integer roomCount;
-
+    
     // Relationships
     @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
