@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.dto.request.SignUpRequest;
+import com.backend.dto.response.UserResponse;
 import com.backend.entity.User;
 import com.backend.repository.UserRepository;
 
@@ -52,5 +53,21 @@ public class UserService {
         // 3. 로그인 성공
         return user;
 //		return userRepository.findAll();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public UserResponse getUserById(int id) {
+		
+		User user = userRepository.getById(id);
+		UserResponse resultUser = new UserResponse();
+		resultUser.setId(user.getId());
+		resultUser.setLoginId(user.getLoginId());
+		resultUser.setPassword(user.getPassword());
+		resultUser.setPhoneNumber(user.getPhoneNumber());
+		resultUser.setRole(user.getRole());
+		resultUser.setUsername(user.getUsername());
+		
+		
+		return resultUser;
 	}
 }
