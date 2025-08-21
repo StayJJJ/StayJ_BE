@@ -2,6 +2,8 @@ package com.backend.entity;
 
 import java.util.List;
 
+import com.backend.dto.response.UserInfoDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
@@ -20,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +49,20 @@ public class User {
 
     @OneToMany(mappedBy = "guest")
     private List<Reservation> reservations;
+    
+    public void updateUserInfo(String username, String phoneNumber, String password) {
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.password = password; // 암호화는 Service 단에서
+    }
+    
+    public UserInfoDto toDto() {
+        return new UserInfoDto(
+                this.id,
+                this.username,
+                this.loginId,
+                this.role,
+                this.phoneNumber
+        );
+    }
 }

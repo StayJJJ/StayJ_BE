@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.backend.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-	Optional<User> findByLoginId(String loginId);
-	Optional<User> findById(Integer hostId);
+public interface UserInfoRepository extends JpaRepository<User, Long> {
+    Optional<User> findById(int id);
 }
