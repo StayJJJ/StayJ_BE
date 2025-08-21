@@ -22,10 +22,6 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer>
         from Guesthouse g
         where g.host.id = :hostId
     """)
-<<<<<<< HEAD
     List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Integer hostId);
-=======
-    List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Long hostId);
->>>>>>> d17e51925596e3d7d2617467c7840f49a63528b1
 	
 }
