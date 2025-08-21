@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "guesthouse")
@@ -53,13 +54,13 @@ public class Guesthouse {
 
     @Column(name = "room_count")
     private Integer roomCount;
-
+    
     // Relationships
-    @OneToMany(mappedBy = "guestHouse", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
     
     public void addRoom(Room room) {
-        room.setGuestHouse(this);
+        room.setGuesthouse(this);
         this.roomList.add(room);
     }
 }

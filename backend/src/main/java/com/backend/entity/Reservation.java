@@ -15,6 +15,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -22,6 +23,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +46,11 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    public boolean isOverlapping(LocalDate checkIn, LocalDate checkOut) {
+        // 예약 기간 겹침 여부 판단 (체크아웃 당일은 포함하지 않음)
+        return !(this.checkOutDate.isBefore(checkIn) || this.checkInDate.isAfter(checkOut.minusDays(1)));
+    }
 
     // Relationships
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
