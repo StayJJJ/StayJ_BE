@@ -27,11 +27,11 @@ public class GuesthouseService {
 	public RoomRepository roomRepository;
 	
 	
-	public void createGuestHouseWithRooms(GuestHouseCreateRequest request) {
-	    User host = userRepository.findById(request.getHostId())
+	public Long createGuestHouseWithRooms(Long hostId, GuestHouseCreateRequest request) {
+	    User host = userRepository.findById(hostId)
 	        .orElseThrow(() -> new IllegalArgumentException("Host not found"));
 
-	    Guesthouse guestHouse = Guesthouse.builder()
+	    Guesthouse guesthouse = Guesthouse.builder()
 	        .name(request.getName())
 	        .description(request.getDescription())
 	        .address(request.getAddress())
@@ -42,18 +42,25 @@ public class GuesthouseService {
 	        .host(host)
 	        .roomList(new ArrayList<Room>())
 	        .build(); 
+	    
+	    if (request.getRooms() != null) {
+	    	request.getRooms().forEach(r -> {
+		        Room room = Room.builder()
+		            .name(r.getName())
+		            .capacity(r.getCapacity())
+		            .price(r.getPrice())
+		            .photoId(r.getPhotoId())
+		            .build();
+		        guesthouse.addRoom(room);
+		    });
+        }
 
-	    request.getRooms().forEach(r -> {
-	        Room room = Room.builder()
-	            .name(r.getName())
-	            .capacity(r.getCapacity())
-	            .price(r.getPrice())
-	            .photoId(r.getPhotoId())
-	            .build();
-
-	        guestHouse.addRoom(room);
-	    });
-
-	    guesthouseRepository.save(guestHouse);
+	    guesthouseRepository.save(guesthouse);
+	    return guesthouse.getId();
 	}
+	
+	public List<GuesthouseRepository.GuesthouseSummary> getMyGuesthouses(Long hostId) {
+		return guesthouseRepository.findMyGuesthouses(hostId);
+	}
+	
 }

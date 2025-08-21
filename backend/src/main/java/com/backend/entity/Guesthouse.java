@@ -16,17 +16,20 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "guesthouse")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class Guesthouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
@@ -53,11 +56,11 @@ public class Guesthouse {
     private Integer roomCount;
 
     // Relationships
-    @OneToMany(mappedBy = "guestHouse", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
     
     public void addRoom(Room room) {
-        room.setGuestHouse(this);
+        room.setGuesthouse(this);
         this.roomList.add(room);
     }
 }
