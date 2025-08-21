@@ -1,5 +1,6 @@
 package com.backend.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,5 +53,17 @@ public class Room {
     
     public void setGuesthouse(Guesthouse guesthouse) {
     	this.guesthouse = guesthouse;
+    }
+    
+    public int getReservedPeople(LocalDate checkIn, LocalDate checkOut) {
+        return reservations.stream()
+                .filter(res -> res.isOverlapping(checkIn, checkOut))
+                .mapToInt(res -> res.getPeopleCount())
+                .sum();
+    }
+
+    public boolean isAvailable(LocalDate checkIn, LocalDate checkOut, int people) {
+        int reserved = getReservedPeople(checkIn, checkOut);
+        return (this.capacity - reserved - people) >= 0;
     }
 }

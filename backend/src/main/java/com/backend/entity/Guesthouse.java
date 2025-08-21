@@ -54,7 +54,7 @@ public class Guesthouse {
 
     @Column(name = "room_count")
     private Integer roomCount;
-
+    
     // Relationships
     @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
