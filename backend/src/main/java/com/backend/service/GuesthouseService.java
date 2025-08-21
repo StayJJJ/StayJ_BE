@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.backend.dto.request.GuestHouseCreateRequest;
@@ -14,6 +15,8 @@ import com.backend.entity.User;
 import com.backend.repository.GuesthouseRepository;
 import com.backend.repository.RoomRepository;
 import com.backend.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class GuesthouseService {
@@ -27,7 +30,7 @@ public class GuesthouseService {
 	public RoomRepository roomRepository;
 	
 	
-	public Long createGuestHouseWithRooms(Long hostId, GuestHouseCreateRequest request) {
+	public Integer createGuestHouseWithRooms(Integer hostId, GuestHouseCreateRequest request) {
 	    User host = userRepository.findById(hostId)
 	        .orElseThrow(() -> new IllegalArgumentException("Host not found"));
 
@@ -59,8 +62,20 @@ public class GuesthouseService {
 	    return guesthouse.getId();
 	}
 	
-	public List<GuesthouseRepository.GuesthouseSummary> getMyGuesthouses(Long hostId) {
+	public List<GuesthouseRepository.GuesthouseSummary> getMyGuesthouses(Integer hostId) {
 		return guesthouseRepository.findMyGuesthouses(hostId);
+	}
+
+	@Transactional
+	public void deleteGuesthouse(Integer guesthouseId, Integer hostId) {
+		Guesthouse guesthouse = guesthouseRepository.findById(guesthouseId)
+                .orElseThrow(() -> new IllegalArgumentException("Guesthouse not found"));
+		
+		if(!guesthouse.getHost().getId().equals(hostId)) {
+			throw new IllegalArgumentException("You are not the owner of this guesthouse");
+		}
+		
+		guesthouseRepository.delete(guesthouse);	
 	}
 	
 }

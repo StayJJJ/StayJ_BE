@@ -5,15 +5,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.backend.entity.Guesthouse;
 
-@Repository
-public interface GuesthouseRepository extends JpaRepository<Guesthouse, Long> {
+public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer> {
 
 	interface GuesthouseSummary {
-        Long getId();
+        Integer getId();
         String getName();
         Integer getRoomCount();
         Double getRating();
@@ -24,6 +22,10 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Long> {
         from Guesthouse g
         where g.host.id = :hostId
     """)
+<<<<<<< HEAD
+    List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Integer hostId);
+=======
     List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Long hostId);
+>>>>>>> d17e51925596e3d7d2617467c7840f49a63528b1
 	
 }
