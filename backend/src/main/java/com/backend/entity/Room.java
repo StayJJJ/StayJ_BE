@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "room")
@@ -50,7 +51,7 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
     
-    public void setGuestHouse(Guesthouse guesthouse) {
+    public void setGuesthouse(Guesthouse guesthouse) {
     	this.guesthouse = guesthouse;
     }
     

@@ -11,4 +11,7 @@ import com.backend.entity.Reservation;
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 	List<Reservation> findByRoomId(Integer roomId);
     List<Reservation> findByGuest_Id(Integer userId);
+  
+	@EntityGraph(attributePaths = {"room", "room.guesthouse", "guest"})
+	List<Reservation> findAllByRoom_Guesthouse_IdOrderByCheckInDateAsc(Integer guesthouseId);
 }
