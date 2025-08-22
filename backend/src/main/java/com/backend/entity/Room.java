@@ -1,5 +1,6 @@
 package com.backend.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "room")
@@ -44,12 +46,24 @@ public class Room {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guesthouse_id", nullable = false)
-    private Guesthouse guestHouse;
+    private Guesthouse guesthouse;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
     
-    public void setGuestHouse(Guesthouse guesthouse) {
-    	this.guestHouse = guesthouse;
+    public void setGuesthouse(Guesthouse guesthouse) {
+    	this.guesthouse = guesthouse;
+    }
+    
+    public int getReservedPeople(LocalDate checkIn, LocalDate checkOut) {
+        return reservations.stream()
+                .filter(res -> res.isOverlapping(checkIn, checkOut))
+                .mapToInt(res -> res.getPeopleCount())
+                .sum();
+    }
+
+    public boolean isAvailable(LocalDate checkIn, LocalDate checkOut, int people) {
+        int reserved = getReservedPeople(checkIn, checkOut);
+        return (this.capacity - reserved - people) >= 0;
     }
 }

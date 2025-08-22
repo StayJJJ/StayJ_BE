@@ -46,6 +46,11 @@ public class Reservation {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
+    public boolean isOverlapping(LocalDate checkIn, LocalDate checkOut) {
+        // 예약 기간 겹침 여부 판단 (체크아웃 당일은 포함하지 않음)
+        return !(this.checkOutDate.isBefore(checkIn) || this.checkInDate.isAfter(checkOut.minusDays(1)));
+    }
+
     // Relationships
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Review review;
