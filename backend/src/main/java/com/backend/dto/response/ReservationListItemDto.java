@@ -13,6 +13,7 @@ import lombok.Setter;
 public class ReservationListItemDto {
     private Integer id;
     private Integer roomId;
+    private String roomName;
     private GuestSimpleDto guest;   // { id, username }
     private LocalDate checkInDate;
     private LocalDate checkOutDate;

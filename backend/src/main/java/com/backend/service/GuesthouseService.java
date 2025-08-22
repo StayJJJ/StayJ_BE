@@ -90,6 +90,7 @@ public class GuesthouseService {
         return reservations.stream().map(r -> ReservationListItemDto.builder()
                 .id(r.getId())
                 .roomId(r.getRoom().getId())
+                .roomName(r.getRoom().getName())
                 .guest(GuestSimpleDto.builder()
                         .id(r.getGuest().getId())
                         .username(r.getGuest().getUsername())
