@@ -10,4 +10,5 @@ import com.backend.entity.Reservation;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 	List<Reservation> findByRoomId(Integer roomId);
+    List<Reservation> findByGuest_Id(Integer userId);
 }

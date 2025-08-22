@@ -26,7 +26,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,13 +45,13 @@ public class Room {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guesthouse_id", nullable = false)
-    private Guesthouse guestHouse;
+    private Guesthouse guesthouse;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
     
     public void setGuestHouse(Guesthouse guesthouse) {
-    	this.guestHouse = guesthouse;
+    	this.guesthouse = guesthouse;
     }
     
     public int getReservedPeople(LocalDate checkIn, LocalDate checkOut) {

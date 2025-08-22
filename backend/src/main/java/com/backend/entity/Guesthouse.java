@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-
 public class Guesthouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +55,7 @@ public class Guesthouse {
     private Integer roomCount;
     
     // Relationships
-    @OneToMany(mappedBy = "guestHouse", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
     private List<Room> roomList = new ArrayList<>();
     
     public void addRoom(Room room) {
