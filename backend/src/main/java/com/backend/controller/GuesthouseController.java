@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.dto.request.GuestHouseCreateRequest;
 import com.backend.dto.request.GuesthouseListItemDto;
 import com.backend.dto.response.ApiResponse;
+import com.backend.dto.response.ReservationListItemDto;
 import com.backend.service.GuesthouseService;
 
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,15 @@ public class GuesthouseController {
 			@RequestHeader("user-id") Integer hostId) {
 		guesthouseService.deleteGuesthouse(guesthouseId, hostId);
 		return ResponseEntity.ok(new ApiResponse(true));
+	}
+	
+	@GetMapping("/{guesthouse-id}/reservations")
+	public ResponseEntity<List<ReservationListItemDto>> getReservationsByGuesthouse(
+	        @PathVariable("guesthouse-id") Integer guesthouseId,
+	        @RequestHeader("user-id") Integer hostId
+	) {
+	    var list = guesthouseService.getReservationsByGuesthouse(guesthouseId, hostId);
+	    return ResponseEntity.ok(list);
 	}
 		
 }
