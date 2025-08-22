@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "room")
@@ -26,7 +27,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,13 +46,13 @@ public class Room {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guesthouse_id", nullable = false)
-    private Guesthouse guestHouse;
+    private Guesthouse guesthouse;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
     
-    public void setGuestHouse(Guesthouse guesthouse) {
-    	this.guestHouse = guesthouse;
+    public void setGuesthouse(Guesthouse guesthouse) {
+    	this.guesthouse = guesthouse;
     }
     
     public int getReservedPeople(LocalDate checkIn, LocalDate checkOut) {
