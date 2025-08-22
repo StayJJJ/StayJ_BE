@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.backend.dto.request.GuestHouseDetailRequest;
-import com.backend.service.reservationInfoService;
+import com.backend.service.ReservationInfoService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Controller
 @ResponseBody
 @RequestMapping("/guesthouse")
-public class reservationInfoController {
+public class ReservationInfoController {
 
     @Autowired
-    public reservationInfoService reservationInfoService;
+    public ReservationInfoService reservationInfoService;
 
     @GetMapping("/{guesthouse_Id}")
     public ResponseEntity<GuestHouseDetailRequest> getGuestHouseDetail(

@@ -11,7 +11,7 @@ import com.backend.dto.request.GuestHouseDetailRequest;
 import com.backend.entity.Guesthouse;
 
 @Service
-public class reservationInfoService {
+public class ReservationInfoService {
     
     @Autowired
     private GuesthouseRepository guestHouseRepository;
