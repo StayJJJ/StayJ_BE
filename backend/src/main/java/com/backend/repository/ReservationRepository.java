@@ -13,4 +13,3 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
   
 	@EntityGraph(attributePaths = {"room", "room.guesthouse", "guest"})
 	List<Reservation> findAllByRoom_Guesthouse_IdOrderByCheckInDateAsc(Integer guesthouseId);
-}
