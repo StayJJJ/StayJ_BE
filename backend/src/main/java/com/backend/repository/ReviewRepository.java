@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.backend.entity.Reservation;
 import com.backend.entity.Review;
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
            "WHERE room.guestHouse.id = :guesthouseId " +
            "ORDER BY r.createdAt DESC")
     List<Review> findByGuesthouseId(@Param("guesthouseId") Integer guesthouseId);
+    boolean existsByReservation(Reservation reservation);
 }

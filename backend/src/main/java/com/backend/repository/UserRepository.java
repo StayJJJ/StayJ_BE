@@ -9,5 +9,6 @@ import com.backend.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+	Optional<User> findByLoginId(String loginId);
 	Optional<User> findById(Integer hostId);
 }
