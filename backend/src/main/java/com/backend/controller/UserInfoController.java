@@ -2,6 +2,7 @@ package com.backend.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class UserInfoController {
 	    return userInfoService.getUserInfo(userId);
 	}
 	
-	@PatchMapping
+	@PutMapping
     public UserInfoDto updateUserInfo(
     		@RequestHeader("user-id") Integer userId, 
     		@RequestBody UpdateUserRequest request
