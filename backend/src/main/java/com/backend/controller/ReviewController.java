@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.dto.request.ReviewCreateRequest;
+import com.backend.dto.request.ReviewUpdateRequest;
+import com.backend.dto.response.ReviewResponseDto;
+import com.backend.service.ReviewService;
+
 @RestController
 @RequestMapping("/review")
-
 public class ReviewController {
 	private final ReviewService reviewService;
 	
@@ -28,7 +32,8 @@ public class ReviewController {
 			@RequestHeader("user-id") Integer userId,
 			@RequestBody ReviewCreateRequest request
 	){
-		ReviewResponseDTO response = reviewService.createReview(userId, request);
+		System.out.println(request.reservationId);
+		ReviewResponseDto response = reviewService.createReview(userId, request);
 		return ResponseEntity.ok(response);
 	}
 	

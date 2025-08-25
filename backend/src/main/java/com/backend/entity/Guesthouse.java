@@ -41,22 +41,24 @@ public class Guesthouse {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 255)
+    @Column(length = 255, nullable = false)
     private String address;
 
+    @Column(nullable = false)
     private Double rating;
     
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
     @Column(name = "photo_id", length = 100)
     private Integer photoId;
 
-    @Column(name = "room_count")
+    @Column(name = "room_count", nullable = false)
     private Integer roomCount;
     
     // Relationships
-    @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "guesthouse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Room> roomList = new ArrayList<>();
     
     public void addRoom(Room room) {

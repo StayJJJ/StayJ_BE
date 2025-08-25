@@ -36,24 +36,44 @@ public class GuesthouseService {
 	@Autowired
 	public ReservationRepository reservationRepository;
 
+	@Transactional
 	public Integer createGuestHouseWithRooms(Integer hostId, GuestHouseCreateRequest request) {
+		// 1) 호스트 존재 검증
 		User host = userRepository.findById(hostId).orElseThrow(() -> new IllegalArgumentException("Host not found"));
 
-		Guesthouse guesthouse = Guesthouse.builder().name(request.getName()).description(request.getDescription())
-				.address(request.getAddress()).photoId(request.getPhotoId()).phoneNumber(request.getPhoneNumber())
-				.rating(request.getRating()).roomCount(request.getRoomCount()).host(host)
-				.roomList(new ArrayList<Room>()).build();
+		if (request.getRooms() != null && request.getRoomCount() != null
+                && !request.getRoomCount().equals(request.getRooms().size())) {
+            throw new IllegalArgumentException("room_count mismatch with rooms array size");
+        }
+		
+		// 2) Guesthouse 생성
+		Guesthouse guesthouse = Guesthouse.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .address(request.getAddress())
+                .rating(request.getRating())
+                .photoId(request.getPhotoId())
+                .phoneNumber(request.getPhoneNumber())
+                .roomCount(request.getRoomCount())
+                .host(host)
+                .build();
 
-		if (request.getRooms() != null) {
-			request.getRooms().forEach(r -> {
-				Room room = Room.builder().name(r.getName()).capacity(r.getCapacity()).price(r.getPrice())
-						.photoId(r.getPhotoId()).build();
-				guesthouse.addRoom(room);
-			});
-		}
+		// 3) Rooms 추가 (guesthouse.addRoom로 양방향/주인세팅)
+        if (request.getRooms() != null) {
+            for (GuestHouseCreateRequest.RoomRequest r : request.getRooms()) {
+                Room room = Room.builder()
+                        .name(r.getName())
+                        .capacity(r.getCapacity())
+                        .price(r.getPrice())
+                        .photoId(r.getPhotoId())
+                        .build();
+                guesthouse.addRoom(room);
+            }
+        }
 
-		guesthouseRepository.save(guesthouse);
-		return guesthouse.getId();
+        // 4) 저장 (CascadeType.ALL로 room까지 함께 저장)
+        guesthouseRepository.save(guesthouse);
+        return guesthouse.getId();
 	}
 
 	public List<GuesthouseRepository.GuesthouseSummary> getMyGuesthouses(Integer hostId) {
