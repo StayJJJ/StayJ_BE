@@ -26,15 +26,16 @@ public class UserController {
 
 	@PostMapping("/sign-up")
 	public void signUp(@RequestBody SignUpRequest request) {
+		System.out.println(request.getLoginId());
 		userService.signUp(request);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<UserInfoDto> login(@RequestBody LoginRequest request) {
 		User user = userService.login(request.getLoginId(), request.getPassword());
-		return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getUsername(), user.getLoginId(), user.getRole(),
+		return ResponseEntity.ok(
+				new UserInfoDto(user.getId(), user.getUsername(), user.getLoginId(), user.getRole(),
 				user.getPhoneNumber()));
-
 	}
 
 	@GetMapping("/{id}")

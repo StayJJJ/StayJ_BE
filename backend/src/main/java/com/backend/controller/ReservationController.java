@@ -44,6 +44,7 @@ public class ReservationController {
     @GetMapping("/my")
     public ResponseEntity<List<ReservationResponse>> getMyReservations(
             @RequestHeader("user-id") Integer userId) {
+    		System.out.println("userId = " + userId);
         List<ReservationResponse> reservations = reservationService.getMyReservations(userId);
         return ResponseEntity.ok(reservations);
     }
