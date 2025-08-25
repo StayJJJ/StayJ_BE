@@ -15,25 +15,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.dto.request.GuestHouseCreateRequest;
 import com.backend.dto.request.GuesthouseListItemDto;
-import com.backend.dto.response.ApiResponse;
+import com.backend.dto.response.SuccessResponse;
 import com.backend.dto.response.ReservationListItemDto;
 import com.backend.service.GuesthouseService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/guesthouse")
-@RequiredArgsConstructor
+@Tag(name = "Guesthouse API", description = "게스트하우스 관리 API")
+@RequiredArgsConstructor	
 public class GuesthouseController {
 	@Autowired
 	public GuesthouseService guesthouseService;
 
+	@Operation(summary = "게스트하우스 생성", description = "새로운 게스트하우스를 등록합니다.")
+//    @ApiResponse(responseCode = "201", description = "생성 성공")
 	@PostMapping
-	public ResponseEntity<ApiResponse> createGuesthouse(@RequestHeader("user-id") Integer hostId,
+	public ResponseEntity<SuccessResponse> createGuesthouse(@RequestHeader("user-id") Integer hostId,
 			@Valid @RequestBody GuestHouseCreateRequest request) {
 		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
-		return ResponseEntity.ok(new ApiResponse(true));
+		return ResponseEntity.ok(new SuccessResponse(true));
 	}
 
 	/**
@@ -48,10 +53,10 @@ public class GuesthouseController {
 	}
 
 	@DeleteMapping("/{guesthouse-id}")
-	public ResponseEntity<ApiResponse> deleteGuesthouse(@PathVariable("guesthouse-id") Integer guesthouseId,
+	public ResponseEntity<SuccessResponse> deleteGuesthouse(@PathVariable("guesthouse-id") Integer guesthouseId,
 			@RequestHeader("user-id") Integer hostId) {
 		guesthouseService.deleteGuesthouse(guesthouseId, hostId);
-		return ResponseEntity.ok(new ApiResponse(true));
+		return ResponseEntity.ok(new SuccessResponse(true));
 	}
 
 	@GetMapping("/{guesthouse-id}/reservations")
