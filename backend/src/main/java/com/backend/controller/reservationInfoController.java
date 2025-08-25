@@ -52,6 +52,5 @@ public class reservationInfoController {
     	return ResponseEntity.ok(response);
     }
     
-    
-    
+
 }

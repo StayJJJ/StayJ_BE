@@ -1,13 +1,20 @@
 package com.backend.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class ReviewCreateRequest {
-    private Integer reservationId;
-    private Integer rating;
-    private String comment;
+	@JsonProperty("reservationId")
+    public Integer reservationId;
+    
+    @JsonProperty("rating")
+    public Integer rating;
+    
+    @JsonProperty("comment")
+    public String comment;
 }
 
