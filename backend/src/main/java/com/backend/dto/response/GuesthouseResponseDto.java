@@ -16,7 +16,7 @@ public class GuesthouseResponseDto {
     private String name;
     private String address;
     private Double rating;
-    private String photosUrl;
+    private Integer photoId;
     private Integer roomCount;
     private List<Integer> roomAvailable;
 }
