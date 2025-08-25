@@ -25,13 +25,13 @@ import jakarta.persistence.EntityNotFoundException;
 public class ReservationInfoController {
 
     @Autowired
-    public ReservationInfoService reservationInfoService;
+    public ReservationInfoService ReservationInfoService;
 
     @GetMapping("/{guesthouse_Id}")
     public ResponseEntity<GuestHouseDetailRequest> getGuestHouseDetail(
             @PathVariable("guesthouse_Id") int guesthouseId) {
 
-        GuestHouseDetailRequest response = reservationInfoService.getGuestHouseDetail(guesthouseId);
+        GuestHouseDetailRequest response = ReservationInfoService.getGuestHouseDetail(guesthouseId);
         return ResponseEntity.ok(response);
     }
     
@@ -40,7 +40,7 @@ public class ReservationInfoController {
 	        @PathVariable("guesthouse_Id") int guesthouseId,
 	        @RequestParam(value = "room_available", required = false) List<Integer> roomAvailable) {
 	    
-		RoomResponseRequest response = reservationInfoService.getGuestHouseRooms(guesthouseId, roomAvailable);
+		RoomResponseRequest response = ReservationInfoService.getGuestHouseRooms(guesthouseId, roomAvailable);
 	    return ResponseEntity.ok(response);
 	}
     	
@@ -48,8 +48,9 @@ public class ReservationInfoController {
     public ResponseEntity<List<ReviewResponse>> getReview(
     		@PathVariable("guesthouse_Id") int guesthouseId) {
     	
-    	List<ReviewResponse> response = reservationInfoService.getReview(guesthouseId);
+    	List<ReviewResponse> response = ReservationInfoService.getReview(guesthouseId);
     	return ResponseEntity.ok(response);
     }
-   
+    
+
 }
