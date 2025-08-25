@@ -10,4 +10,5 @@ public class GuestHouseRoomRequest {
     private String name;
     private int capacity;
     private int price;
+    private int photo_id;
 }

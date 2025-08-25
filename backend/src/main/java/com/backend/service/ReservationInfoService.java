@@ -63,6 +63,7 @@ public class ReservationInfoService {
         	        .name(room.getName())
         	        .capacity(room.getCapacity())
         	        .price(room.getPrice())
+        	        .photo_id(room.getPhotoId())
         	        .build())
         	    .collect(Collectors.toList());
 
