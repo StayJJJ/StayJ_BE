@@ -27,43 +27,45 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/guesthouse")
 @Tag(name = "Guesthouse API", description = "게스트하우스 관리 API")
-@RequiredArgsConstructor	
+@RequiredArgsConstructor
 public class GuesthouseController {
 	@Autowired
-	public GuesthouseService guesthouseService;
+    private final GuesthouseService guesthouseService;
 
-	@Operation(summary = "게스트하우스 생성", description = "새로운 게스트하우스를 등록합니다.")
-//    @ApiResponse(responseCode = "201", description = "생성 성공")
-	@PostMapping
-	public ResponseEntity<SuccessResponse> createGuesthouse(@RequestHeader("user-id") Integer hostId,
-			@Valid @RequestBody GuestHouseCreateRequest request) {
-		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
-		return ResponseEntity.ok(new SuccessResponse(true));
-	}
+    @Operation(summary = "게스트하우스 생성")
+    @PostMapping
+    public ResponseEntity<SuccessResponse> createGuesthouse(
+            @RequestHeader("user-id") Integer hostId,
+            @Valid @RequestBody GuestHouseCreateRequest request) {
+        Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
+        return ResponseEntity.ok(new SuccessResponse(true));
+    }
 
-	/**
-	 * GET /guesthouse/mylist Header: user-id: <Integer>
-	 */
-	@GetMapping("/mylist")
-	public ResponseEntity<List<GuesthouseListItemDto>> getMyList(@RequestHeader("user-id") Integer hostId) {
-		var rows = guesthouseService.getMyGuesthouses(hostId).stream()
-				.map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating())).toList();
+    @Operation(summary = "내 게스트하우스 목록 조회")
+    @GetMapping("/mylist")
+    public ResponseEntity<List<GuesthouseListItemDto>> getMyList(
+            @RequestHeader("user-id") Integer hostId) {
+        var rows = guesthouseService.getMyGuesthouses(hostId).stream()
+                .map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating()))
+                .toList();
+        return ResponseEntity.ok(rows);
+    }
 
-		return ResponseEntity.ok(rows);
-	}
+    @Operation(summary = "게스트하우스 삭제")
+    @DeleteMapping("/{guesthouseId}")
+    public ResponseEntity<SuccessResponse> deleteGuesthouse(
+            @PathVariable("guesthouseId") Integer guesthouseId,
+            @RequestHeader("user-id") Integer hostId) {
+        guesthouseService.deleteGuesthouse(guesthouseId, hostId);
+        return ResponseEntity.ok(new SuccessResponse(true));
+    }
 
-	@DeleteMapping("/{guesthouse-id}")
-	public ResponseEntity<SuccessResponse> deleteGuesthouse(@PathVariable("guesthouse-id") Integer guesthouseId,
-			@RequestHeader("user-id") Integer hostId) {
-		guesthouseService.deleteGuesthouse(guesthouseId, hostId);
-		return ResponseEntity.ok(new SuccessResponse(true));
-	}
-
-	@GetMapping("/{guesthouse-id}/reservations")
-	public ResponseEntity<List<ReservationListItemDto>> getReservationsByGuesthouse(
-			@PathVariable("guesthouse-id") Integer guesthouseId, @RequestHeader("user-id") Integer hostId) {
-		var list = guesthouseService.getReservationsByGuesthouse(guesthouseId, hostId);
-		return ResponseEntity.ok(list);
-	}
-
+    @Operation(summary = "게스트하우스 예약 목록 조회")
+    @GetMapping("/{guesthouseId}/reservations")
+    public ResponseEntity<List<ReservationListItemDto>> getReservationsByGuesthouse(
+            @PathVariable("guesthouseId") Integer guesthouseId,
+            @RequestHeader("user-id") Integer hostId) {
+        var list = guesthouseService.getReservationsByGuesthouse(guesthouseId, hostId);
+        return ResponseEntity.ok(list);
+    }
 }

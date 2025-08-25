@@ -15,9 +15,8 @@ public class SwaggerConfig {
 	}
 
 	private Info apiInfo() {
-		return new Info()
-                .title("StayJ API")
-                .version("1.0.0")
-                .description("StayJ REST API 문서");
+		return new Info().title("Swagger UI - API의 제목 ") // API의 제목
+				.description("컨트롤러들 명세서입니다.") // API에 대한 설명
+				.version("1.0.0"); // API의 버전
 	}
 }
