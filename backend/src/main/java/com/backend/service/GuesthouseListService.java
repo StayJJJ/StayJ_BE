@@ -37,7 +37,7 @@ public class GuesthouseListService {
                             .name(guesthouse.getName())
                             .address(guesthouse.getAddress())
                             .rating(guesthouse.getRating())
-                            .photosUrl("https://example.com/photos/" + guesthouse.getPhotoId() + ".jpg")
+                            .photoId(guesthouse.getPhotoId()) // 여기 바꿔주기
                             .roomCount(guesthouse.getRoomCount())
                             .roomAvailable(availableRoomIds)
                             .build();
