@@ -2,63 +2,115 @@ package com.backend.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.backend.dto.request.GuestHouseCreateRequest;
 import com.backend.dto.request.GuesthouseListItemDto;
-import com.backend.dto.response.ApiResponse;
 import com.backend.dto.response.ReservationListItemDto;
+import com.backend.dto.response.SuccessResponse;
 import com.backend.service.GuesthouseService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/guesthouse")
+@Tag(name = "Guesthouse API", description = "게스트하우스 관리 API")
 @RequiredArgsConstructor
 public class GuesthouseController {
-	@Autowired
-	public GuesthouseService guesthouseService;
 
+	private final GuesthouseService guesthouseService;
+
+	// ---------------------------------------------------------
+	// 1) 게스트하우스 생성
+	// ---------------------------------------------------------
+	@Operation(summary = "게스트하우스 생성", 
+			description = "호스트가 새로운 게스트하우스를 등록합니다. 방 정보까지 함께 생성할 수 있습니다.", 
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+					description = "게스트하우스 생성 요청", 
+					required = true, 
+					content = @Content(
+							schema = @Schema(implementation = GuestHouseCreateRequest.class), 
+							examples = @ExampleObject(name = "게스트하우스 생성 예시", value = """
+								{
+								  "name": "제주 힐링하우스",
+								  "description": "바다가 보이는 힐링 게스트하우스입니다.",
+								  "address": "제주특별자치도 제주시 애월읍 해안로 123",
+								  "phone_number": "010-1234-5678",
+								  "photo_id": 123,
+								  "room_count": 2,
+								  "rooms": [
+								    { "name": "오션뷰 룸", "capacity": 2, "price": 50000 },
+								    { "name": "시티뷰 룸", "capacity": 4, "price": 40000 }
+								  ]
+								}
+								"""))), 
+			responses = {
+				@ApiResponse(responseCode = "200", description = "생성 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+				@ApiResponse(responseCode = "400", description = "유효하지 않은 요청 본문", content = @Content),
+				@ApiResponse(responseCode = "403", description = "호스트 권한 없음", content = @Content) })
 	@PostMapping
-	public ResponseEntity<ApiResponse> createGuesthouse(@RequestHeader("user-id") Integer hostId,
+	public ResponseEntity<SuccessResponse> createGuesthouse(
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId,
+
 			@Valid @RequestBody GuestHouseCreateRequest request) {
 		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
-		return ResponseEntity.ok(new ApiResponse(true));
+		return ResponseEntity.ok(new SuccessResponse(true));
 	}
 
-	/**
-	 * GET /guesthouse/mylist Header: user-id: <Integer>
-	 */
+	// ---------------------------------------------------------
+	// 2) 내 게스트하우스 목록 조회
+	// ---------------------------------------------------------
+	@Operation(summary = "내 게스트하우스 목록 조회", description = "헤더의 user-id(호스트)로 소유한 게스트하우스 목록을 조회합니다.", responses = {
+			@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GuesthouseListItemDto.class))),
+			@ApiResponse(responseCode = "403", description = "권한 없음(호스트가 아님)", content = @Content) })
 	@GetMapping("/mylist")
-	public ResponseEntity<List<GuesthouseListItemDto>> getMyList(@RequestHeader("user-id") Integer hostId) {
+	public ResponseEntity<List<GuesthouseListItemDto>> getMyList(
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		var rows = guesthouseService.getMyGuesthouses(hostId).stream()
 				.map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating())).toList();
-
 		return ResponseEntity.ok(rows);
 	}
 
-	@DeleteMapping("/{guesthouse-id}")
-	public ResponseEntity<ApiResponse> deleteGuesthouse(@PathVariable("guesthouse-id") Integer guesthouseId,
-			@RequestHeader("user-id") Integer hostId) {
+	// ---------------------------------------------------------
+	// 3) 게스트하우스 삭제
+	// ---------------------------------------------------------
+	@Operation(summary = "게스트하우스 삭제", description = "특정 게스트하우스를 삭제합니다. 본인 소유의 게스트하우스만 삭제할 수 있습니다.", responses = {
+			@ApiResponse(responseCode = "200", description = "삭제 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+			@ApiResponse(responseCode = "403", description = "소유자가 아님 / 권한 없음", content = @Content),
+			@ApiResponse(responseCode = "404", description = "게스트하우스가 존재하지 않음", content = @Content) })
+	@DeleteMapping("/{guesthouseId}")
+	public ResponseEntity<SuccessResponse> deleteGuesthouse(
+			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "10", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
+
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		guesthouseService.deleteGuesthouse(guesthouseId, hostId);
-		return ResponseEntity.ok(new ApiResponse(true));
+		return ResponseEntity.ok(new SuccessResponse(true));
 	}
 
-	@GetMapping("/{guesthouse-id}/reservations")
+	// ---------------------------------------------------------
+	// 4) 게스트하우스 예약 목록 조회
+	// ---------------------------------------------------------
+	@Operation(summary = "게스트하우스 예약 목록 조회", description = "특정 게스트하우스에 대한 예약 목록을 조회합니다. 호스트 본인의 게스트하우스만 조회할 수 있습니다.", responses = {
+			@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReservationListItemDto.class))),
+			@ApiResponse(responseCode = "403", description = "소유자가 아님 / 권한 없음", content = @Content),
+			@ApiResponse(responseCode = "404", description = "게스트하우스가 존재하지 않음", content = @Content) })
+	@GetMapping("/{guesthouseId}/reservations")
 	public ResponseEntity<List<ReservationListItemDto>> getReservationsByGuesthouse(
-			@PathVariable("guesthouse-id") Integer guesthouseId, @RequestHeader("user-id") Integer hostId) {
+			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "10", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
+
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		var list = guesthouseService.getReservationsByGuesthouse(guesthouseId, hostId);
 		return ResponseEntity.ok(list);
 	}
-
 }
