@@ -9,7 +9,6 @@ import jakarta.validation.constraints.*;
 
 @Data
 public class GuestHouseCreateRequest {
-
     @NotBlank
     private String name;
 
