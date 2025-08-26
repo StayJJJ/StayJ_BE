@@ -15,5 +15,6 @@ public class ReservationResponse {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private Integer peopleCount;
-    private Boolean reviewed;
+    private Integer reviewId;
+    private String reviewComment;
 }

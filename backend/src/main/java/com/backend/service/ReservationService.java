@@ -77,7 +77,8 @@ public class ReservationService {
 	                .checkInDate(r.getCheckInDate())
 	                .checkOutDate(r.getCheckOutDate())
 	                .peopleCount(r.getPeopleCount())
-	                .reviewed(r.getReview() != null)
+	                .reviewId(r.getReview() != null ? r.getReview().getId() : null)
+	                .reviewComment(r.getReview() != null ? r.getReview().getComment() : null)
 	                .build();
 
 	        responses.add(response);
