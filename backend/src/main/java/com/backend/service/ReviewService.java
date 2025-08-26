@@ -21,7 +21,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @Service
 public class ReviewService {
-
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
@@ -105,14 +104,27 @@ public class ReviewService {
 
     @Transactional
     public boolean deleteReview(Integer userId, int reviewId) {
-        Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
-        if (reviewOpt.isEmpty()) return false;
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("리뷰가 존재하지 않습니다."));
 
-        Review review = reviewOpt.get();
-
-        if (!review.getReservation().getGuest().getId().equals(userId)) return false;
+        Reservation reservation = review.getReservation();
+        reservation.deleteReview();
 
         reviewRepository.delete(review);
         return true;
+    }
+    
+    // 리뷰 단건 조회
+    public ReviewResponseDto getReviewById(int reviewId) {
+        return reviewRepository.findById(reviewId)
+                .map(review -> ReviewResponseDto.builder()
+                        .id(review.getId())
+                        .reservationId(review.getReservation().getId())
+                        .rating(review.getRating())
+                        .comment(review.getComment())
+                        .createdAt(review.getCreatedAt())
+                        .build()
+                )
+                .orElse(null);
     }
 }

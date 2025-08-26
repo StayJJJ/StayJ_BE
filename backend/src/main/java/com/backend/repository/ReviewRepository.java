@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-  
     // 예약당 리뷰가 존재하는지 확인
     boolean existsByReservation(Reservation reservation);
 
@@ -21,5 +20,4 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
            "WHERE room.guesthouse.id = :guesthouseId " +  // 여기서 guestHouse → guesthouse
            "ORDER BY r.createdAt DESC")
     List<Review> findByGuesthouseId(@Param("guesthouseId") Integer guesthouseId);
-
 }
