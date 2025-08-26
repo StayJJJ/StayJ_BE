@@ -16,6 +16,9 @@ import com.backend.repository.ReservationRepository;
 import com.backend.repository.ReviewRepository;
 import com.backend.repository.UserRepository;
 
+import org.springframework.web.server.ResponseStatusException;
+import static org.springframework.http.HttpStatus.*;
+
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
@@ -32,24 +35,38 @@ public class ReviewService {
 
     @Transactional
     public ReviewResponseDto createReview(Integer userId, ReviewCreateRequest request) {
-    	System.out.println(request.getReservationId());
-        Optional<Reservation> reservationOpt = reservationRepository.findById(request.getReservationId());
-        if (reservationOpt.isEmpty()) {
-            throw new IllegalArgumentException("예약이 존재하지 않습니다.");
-        }
-        Reservation reservation = reservationOpt.get();
+//    	System.out.println(request.getReservationId());
+    	
+    	var reservation = reservationRepository.findById(request.getReservationId())
+    	        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "예약이 존재하지 않습니다."));
 
-        if (!reservation.getGuest().getId().equals(userId)) {
-            throw new IllegalArgumentException("예약한 사용자만 리뷰 작성 가능");
-        }
-
-        if (reservation.getCheckOutDate().isAfter(LocalDate.now())) {
-            throw new IllegalStateException("체크아웃 이후에만 리뷰 작성이 가능합니다.");
-        }
-
-        if (reviewRepository.existsByReservation(reservation)) {
-            throw new IllegalStateException("이 예약에 대해 이미 리뷰가 작성되어 있습니다.");
-        }
+    	    if (!reservation.getGuest().getId().equals(userId)) {
+    	        throw new ResponseStatusException(FORBIDDEN, "예약한 사용자만 리뷰 작성 가능");
+    	    }
+    	    if (reservation.getCheckOutDate().isAfter(LocalDate.now())) {
+    	        throw new ResponseStatusException(BAD_REQUEST, "체크아웃 이후에만 리뷰 작성 가능합니다.");
+    	    }
+    	    if (reviewRepository.existsByReservation(reservation)) {
+    	        throw new ResponseStatusException(CONFLICT, "이 예약에 대해 이미 리뷰가 작성되어 있습니다.");
+    	    }
+    	
+//        Optional<Reservation> reservationOpt = reservationRepository.findById(request.getReservationId());
+//        if (reservationOpt.isEmpty()) {
+//            throw new IllegalArgumentException("예약이 존재하지 않습니다.");
+//        }
+//        Reservation reservation = reservationOpt.get();
+//
+//        if (!reservation.getGuest().getId().equals(userId)) {
+//            throw new IllegalArgumentException("예약한 사용자만 리뷰 작성 가능");
+//        }
+//
+//        if (reservation.getCheckOutDate().isAfter(LocalDate.now())) {
+//            throw new IllegalStateException("체크아웃 이후에만 리뷰 작성이 가능합니다.");
+//        }
+//
+//        if (reviewRepository.existsByReservation(reservation)) {
+//            throw new IllegalStateException("이 예약에 대해 이미 리뷰가 작성되어 있습니다.");
+//        }
 
         Review review = Review.builder()
                 .reservation(reservation)

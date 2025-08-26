@@ -25,44 +25,53 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    @Column(name = "login_id", nullable = false, unique = true, length = 50)
-    private String loginId;
+	@Column(name = "login_id", nullable = false, unique = true, length = 50)
+	private String loginId;
 
-    @Column(nullable = false, length = 50)
-    private String username;
+	@Column(nullable = false, length = 50)
+	private String username;
 
-    @Column(nullable = false, length = 255)
-    private String password;
+	@Column(nullable = false, length = 255)
+	private String password;
 
-    @Column(nullable = false, length = 10)
-    private String role = "GUEST"; // 'HOST' or 'GUEST'
+	@Column(nullable = false, length = 10)
+	private String role = "GUEST"; // 'HOST' or 'GUEST'
 
-    @Column(name = "phone_number", length = 20)
-    private String phoneNumber;
+	@Column(name = "phone_number", length = 20)
+	private String phoneNumber;
 
-    @OneToMany(mappedBy = "host")
-    private List<Guesthouse> guesthouses;
+	@OneToMany(mappedBy = "host")
+	private List<Guesthouse> guesthouses;
 
-    @OneToMany(mappedBy = "guest")
-    private List<Reservation> reservations;
-    
-    public void updateUserInfo(String username, String phoneNumber, String password) {
-        this.username = username;
-        this.phoneNumber = phoneNumber;
-        this.password = password; // 암호화는 Service 단에서
-    }
-    
-    public UserInfoDto toDto() {
-        return new UserInfoDto(
-                this.id,
-                this.username,
-                this.loginId,
-                this.role,
-                this.phoneNumber
-        );
-    }
+	@OneToMany(mappedBy = "guest")
+	private List<Reservation> reservations;
+
+	public void updateUserInfo(String username, String phoneNumber, String password) {
+		this.username = username;
+		this.phoneNumber = phoneNumber;
+		this.password = password; // 암호화는 Service 단에서
+	}
+
+	public void updateUsername(String username) {
+		if (username != null && !username.isBlank())
+			this.username = username;
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		if (phoneNumber != null && !phoneNumber.isBlank())
+			this.phoneNumber = phoneNumber;
+	}
+
+	public void updatePassword(String password) {
+		if (password != null && !password.isBlank())
+			this.password = password;
+	}
+
+	public UserInfoDto toDto() {
+		return new UserInfoDto(this.id, this.username, this.loginId, this.role, this.phoneNumber);
+	}
 }
