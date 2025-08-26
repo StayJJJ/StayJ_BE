@@ -15,6 +15,7 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer>
         String getName();
         Integer getRoomCount();
         Double getRating();
+		Integer getPhotoId();
     }
 
     @Query("""
