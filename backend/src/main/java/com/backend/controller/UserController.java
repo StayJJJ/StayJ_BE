@@ -1,17 +1,22 @@
 package com.backend.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.backend.dto.request.LoginRequest;
 import com.backend.dto.request.SignUpRequest;
+import com.backend.dto.response.SuccessResponse;
 import com.backend.dto.response.UserInfoDto;
 import com.backend.dto.response.UserResponse;
 import com.backend.entity.User;
 import com.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,9 +29,48 @@ import jakarta.validation.Valid;
 @Tag(name = "User API", description = "사용자 회원가입/로그인/조회 API")
 public class UserController {
 
-    @Autowired
+	@Autowired
     public UserService userService;
 
+    // ---------------------------------------------------------
+    // 1) 회원가입
+    // ---------------------------------------------------------
+    @Operation(
+        summary = "회원가입",
+        description = "새로운 사용자를 회원가입시킵니다.",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "회원가입 요청",
+            required = true,
+            content = @Content(
+                schema = @Schema(implementation = SignUpRequest.class),
+                examples = @ExampleObject(
+                    name = "회원가입 예시",
+                    value = """
+                    {
+                      "username": "홍길동",
+                      "login_id": "hong123",
+                      "password": "1234",
+                      "role": "GUEST",
+                      "phone_number": "010-1234-5678"
+                    }
+                    """
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청", content = @Content)
+        }
+    )
+    @PostMapping("/sign-up")
+    public ResponseEntity<SuccessResponse> signUp(@RequestBody SignUpRequest request) {
+        userService.signUp(request);
+        return ResponseEntity.ok(new SuccessResponse(true));
+    }
+
+    // ---------------------------------------------------------
+    // 2) 로그인
+    // ---------------------------------------------------------
     @Operation(
         summary = "로그인",
         description = "아이디와 비밀번호로 로그인 후 사용자 정보를 반환합니다.",
@@ -60,5 +104,30 @@ public class UserController {
         ));
     }
 
-    // (회원가입/조회는 기존 그대로 두셔도 됩니다)
+    // ---------------------------------------------------------
+    // 3) 사용자 단건 조회
+    // ---------------------------------------------------------
+    @Operation(
+        summary = "사용자 단건 조회",
+        description = "사용자 ID로 사용자 정보를 조회합니다.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음", content = @Content)
+        }
+    )
+    @GetMapping("/{id}")
+    public UserResponse getUserById(
+        @Parameter(
+            name = "id",
+            in = ParameterIn.PATH,
+            required = true,
+            description = "조회할 사용자 ID",
+            example = "1",
+            schema = @Schema(type = "integer", format = "int32")
+        )
+        @PathVariable("id") int id
+    ) {
+        return userService.getUserById(id);
+    }
 }
