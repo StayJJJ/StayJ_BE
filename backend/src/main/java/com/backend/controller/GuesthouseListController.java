@@ -68,7 +68,7 @@ public class GuesthouseListController {
             )
             @RequestParam(name = "people", required = false) @Min(1) Integer people,
 
-            @Parameter(
+            	@Parameter(
                 name = "user-id",
                 in = ParameterIn.HEADER,
                 required = true,
