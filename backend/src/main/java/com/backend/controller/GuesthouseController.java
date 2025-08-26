@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.backend.dto.request.GuestHouseCreateRequest;
-import com.backend.dto.request.GuesthouseListItemDto;
+import com.backend.dto.response.GuesthouseListItemDto;
 import com.backend.dto.response.ReservationListItemDto;
 import com.backend.dto.response.SuccessResponse;
 import com.backend.service.GuesthouseService;
@@ -78,7 +78,7 @@ public class GuesthouseController {
 	public ResponseEntity<List<GuesthouseListItemDto>> getMyList(
 			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		var rows = guesthouseService.getMyGuesthouses(hostId).stream()
-				.map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating())).toList();
+				.map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating(), p.getPhotoId())).toList();
 		return ResponseEntity.ok(rows);
 	}
 
