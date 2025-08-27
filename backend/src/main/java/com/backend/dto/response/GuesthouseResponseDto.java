@@ -19,4 +19,5 @@ public class GuesthouseResponseDto {
     private Integer photoId;
     private Integer roomCount;
     private List<Integer> roomAvailable;
+    private Integer minPrice;
 }

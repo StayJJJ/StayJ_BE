@@ -26,20 +26,31 @@ public class GuesthouseListService {
         return allGuesthouses.stream()
                 .filter(guesthouse -> name == null || guesthouse.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(guesthouse -> {
-                    // 각 게스트하우스의 예약 가능한 방 필터링
-                    List<Integer> availableRoomIds = guesthouse.getRoomList().stream()
+                    // 예약 가능한 방 필터링
+                    List<Room> availableRooms = guesthouse.getRoomList().stream()
                             .filter(room -> room.isAvailable(checkIn, checkOut, people))
+                            .toList();
+
+                    // 방 id 리스트
+                    List<Integer> availableRoomIds = availableRooms.stream()
                             .map(Room::getId)
-                            .collect(Collectors.toList());
+                            .toList();
+
+                    // 최저가 계산 (예약 가능한 방이 있을 때만)
+                    Integer minPrice = availableRooms.stream()
+                            .map(Room::getPrice)
+                            .min(Integer::compareTo)
+                            .orElse(null);
 
                     return GuesthouseResponseDto.builder()
                             .id(guesthouse.getId())
                             .name(guesthouse.getName())
                             .address(guesthouse.getAddress())
                             .rating(guesthouse.getRating())
-                            .photoId(guesthouse.getPhotoId()) // 여기 바꿔주기
+                            .photoId(guesthouse.getPhotoId())
                             .roomCount(guesthouse.getRoomCount())
                             .roomAvailable(availableRoomIds)
+                            .minPrice(minPrice)
                             .build();
                 })
                 .filter(dto -> !dto.getRoomAvailable().isEmpty()) // 방이 하나도 없으면 제외
