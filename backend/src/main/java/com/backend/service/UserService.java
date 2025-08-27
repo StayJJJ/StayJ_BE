@@ -67,7 +67,6 @@ public class UserService {
 		resultUser.setRole(user.getRole());
 		resultUser.setUsername(user.getUsername());
 		
-		
 		return resultUser;
 	}
 }

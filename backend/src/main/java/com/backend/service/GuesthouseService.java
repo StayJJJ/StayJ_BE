@@ -72,8 +72,8 @@ public class GuesthouseService {
         }
 
         // 4) 저장 (CascadeType.ALL로 room까지 함께 저장)
-        guesthouseRepository.save(guesthouse);
-        return guesthouse.getId();
+        Guesthouse saved = guesthouseRepository.save(guesthouse);
+        return saved.getId();
 	}
 
 	public List<GuesthouseRepository.GuesthouseSummary> getMyGuesthouses(Integer hostId) {
