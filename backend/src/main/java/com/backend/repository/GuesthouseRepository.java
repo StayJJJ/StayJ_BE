@@ -23,7 +23,7 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer>
 	}
 
 	@Query("""
-		    select g.id as id, g.name as name, g.roomCount as roomCount, g.rating as rating
+		    select g.id as id, g.name as name, g.roomCount as roomCount, g.rating as rating, g.photoId as photoId
 		    from Guesthouse g
 		    where g.host.id = :hostId
 			""")

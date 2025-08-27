@@ -52,11 +52,8 @@ public class GuesthouseController {
 			@ApiResponse(responseCode = "403", description = "호스트 권한 없음", content = @Content) })
 	@PostMapping
 	public ResponseEntity<SuccessResponse> createGuesthouse(
-			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", 
-						schema = @Schema(type = "integer", format = "int32")) 
-			@RequestHeader("user-id") Integer hostId,
-			@Valid
-			@RequestBody GuestHouseCreateRequest request) {		
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId,
+			@Valid @RequestBody GuestHouseCreateRequest request) {
 //		System.out.println("[REQ] " + request);
 //	    System.out.println("[REQ.name] " + request.getName());
 		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);

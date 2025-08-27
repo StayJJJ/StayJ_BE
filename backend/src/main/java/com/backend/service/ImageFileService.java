@@ -59,7 +59,7 @@ public class ImageFileService {
             int assignedId = isCover ? nextGh++ : nextRm++;
 
             // 디렉터리: cover -> guesthouse, room-* -> room
-            Path dir = Paths.get(uploadRoot, isCover ? "guesthouse" : "room");
+            Path dir = Paths.get(uploadRoot, isCover ? "guesthouses" : "rooms");
             Files.createDirectories(dir);
 
             // 확장자는 요구대로 항상 .png (원본 변환 X 주의)
