@@ -55,8 +55,7 @@ public class ReservationController {
                 examples = @ExampleObject(
                     name = "reservation-create",
                     value = "{\n" +
-                            "  \"guesthouse_id\": 12,\n" +
-                            "  \"room_id\": 6,\n" +
+                            "  \"room_id\": 7,\n" +
                             "  \"check_in_date\": \"2025-09-10\",\n" +
                             "  \"check_out_date\": \"2025-09-12\",\n" +
                             "  \"people_count\": 2\n" +
@@ -129,12 +128,12 @@ public class ReservationController {
     })
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<Map<String, Boolean>> cancelReservation(
-        @Parameter(description = "예약 ID", required = true, example = "101")
+        @Parameter(description = "예약 ID", required = true, example = "139")
         @PathVariable("reservationId") Integer reservationId,
 
         @Parameter(
             name = "user-id", in = ParameterIn.HEADER, required = true,
-            description = "요청 사용자 ID", example = "1",
+            description = "요청 사용자 ID", example = "10",
             schema = @Schema(type = "integer", format = "int32")
         )
         @RequestHeader("user-id") Integer userId
