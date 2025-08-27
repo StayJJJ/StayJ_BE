@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/images")
@@ -28,6 +30,12 @@ public class ImageController {
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody( // <-- Swagger 전용(실제 바인딩엔 영향 없음)
+    	    content = @Content(
+    	        mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+    	        schema = @Schema(implementation = UploadMultiForm.class)
+    	    )
+    	)
     public List<UploadResp> uploadMulti(
         @ModelAttribute UploadMultiForm form
     ) throws IOException {
