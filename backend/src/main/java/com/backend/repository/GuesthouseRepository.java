@@ -11,18 +11,26 @@ import com.backend.entity.Guesthouse;
 public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer> {
 
 	interface GuesthouseSummary {
-        Integer getId();
-        String getName();
-        Integer getRoomCount();
-        Double getRating();
-		Integer getPhotoId();
-    }
+		Integer getId();
 
-    @Query("""
-        select g.id as id, g.name as name, g.roomCount as roomCount, g.rating as rating
-        from Guesthouse g
-        where g.host.id = :hostId
-    """)
-    List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Integer hostId);
-	
+		String getName();
+
+		Integer getRoomCount();
+
+		Double getRating();
+
+		Integer getPhotoId();
+	}
+
+	@Query("""
+		    select g.id as id, g.name as name, g.roomCount as roomCount, g.rating as rating
+		    from Guesthouse g
+		    where g.host.id = :hostId
+			""")
+	List<GuesthouseSummary> findMyGuesthouses(@Param("hostId") Integer hostId);
+
+	@Query("""
+			select coalesce(max(g.photoId), 0) from Guesthouse g
+			""")
+	Integer findMaxPhotoId();
 }

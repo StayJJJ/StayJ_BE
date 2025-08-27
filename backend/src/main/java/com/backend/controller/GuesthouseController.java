@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,36 +33,32 @@ public class GuesthouseController {
 	// ---------------------------------------------------------
 	// 1) 게스트하우스 생성
 	// ---------------------------------------------------------
-	@Operation(summary = "게스트하우스 생성", 
-			description = "호스트가 새로운 게스트하우스를 등록합니다. 방 정보까지 함께 생성할 수 있습니다.", 
-			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-					description = "게스트하우스 생성 요청", 
-					required = true, 
-					content = @Content(
-							schema = @Schema(implementation = GuestHouseCreateRequest.class), 
-							examples = @ExampleObject(name = "게스트하우스 생성 예시", value = """
-								{
-								  "name": "제주 힐링하우스",
-								  "description": "바다가 보이는 힐링 게스트하우스입니다.",
-								  "address": "제주특별자치도 제주시 애월읍 해안로 123",
-								  "phone_number": "010-1234-5678",
-								  "photo_id": 123,
-								  "room_count": 2,
-								  "rooms": [
-								    { "name": "오션뷰 룸", "capacity": 2, "price": 50000 },
-								    { "name": "시티뷰 룸", "capacity": 4, "price": 40000 }
-								  ]
-								}
-								"""))), 
-			responses = {
-				@ApiResponse(responseCode = "200", description = "생성 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-				@ApiResponse(responseCode = "400", description = "유효하지 않은 요청 본문", content = @Content),
-				@ApiResponse(responseCode = "403", description = "호스트 권한 없음", content = @Content) })
+	@Operation(summary = "게스트하우스 생성", description = "호스트가 새로운 게스트하우스를 등록합니다. 방 정보까지 함께 생성할 수 있습니다.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "게스트하우스 생성 요청", required = true, content = @Content(schema = @Schema(implementation = GuestHouseCreateRequest.class), examples = @ExampleObject(name = "게스트하우스 생성 예시", value = """
+			{
+			  "name": "제주 힐링하우스",
+			  "description": "바다가 보이는 힐링 게스트하우스입니다.",
+			  "address": "제주특별자치도 제주시 애월읍 해안로 123",
+			  "phone_number": "010-1234-5678",
+			  "photo_id": 123,
+			  "room_count": 2,
+			  "rooms": [
+			    { "name": "오션뷰 룸", "capacity": 2, "price": 50000 },
+			    { "name": "시티뷰 룸", "capacity": 4, "price": 40000 }
+			  ]
+			}
+			"""))), responses = {
+			@ApiResponse(responseCode = "200", description = "생성 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+			@ApiResponse(responseCode = "400", description = "유효하지 않은 요청 본문", content = @Content),
+			@ApiResponse(responseCode = "403", description = "호스트 권한 없음", content = @Content) })
 	@PostMapping
 	public ResponseEntity<SuccessResponse> createGuesthouse(
-			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId,
-
-			@Valid @RequestBody GuestHouseCreateRequest request) {
+			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", 
+						schema = @Schema(type = "integer", format = "int32")) 
+			@RequestHeader("user-id") Integer hostId,
+			@Valid
+			@RequestBody GuestHouseCreateRequest request) {		
+//		System.out.println("[REQ] " + request);
+//	    System.out.println("[REQ.name] " + request.getName());
 		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
 		return ResponseEntity.ok(new SuccessResponse(true));
 	}
@@ -77,8 +72,9 @@ public class GuesthouseController {
 	@GetMapping("/mylist")
 	public ResponseEntity<List<GuesthouseListItemDto>> getMyList(
 			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
-		var rows = guesthouseService.getMyGuesthouses(hostId).stream()
-				.map(p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating(), p.getPhotoId())).toList();
+		var rows = guesthouseService.getMyGuesthouses(hostId).stream().map(
+				p -> new GuesthouseListItemDto(p.getId(), p.getName(), p.getRoomCount(), p.getRating(), p.getPhotoId()))
+				.toList();
 		return ResponseEntity.ok(rows);
 	}
 
