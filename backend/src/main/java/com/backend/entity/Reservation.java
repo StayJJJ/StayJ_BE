@@ -54,4 +54,8 @@ public class Reservation {
     // Relationships
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Review review;
+    
+    public void deleteReview() {
+    		this.review = null;
+    }
 }

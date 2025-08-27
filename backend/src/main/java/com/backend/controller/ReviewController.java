@@ -3,6 +3,15 @@ package com.backend.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import com.backend.dto.request.ReviewCreateRequest;
@@ -24,11 +33,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/review")
 @Tag(name = "Review API", description = "리뷰 작성/수정/삭제 API")
 public class ReviewController {
-
-    private final ReviewService reviewService;
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
+	private final ReviewService reviewService;
+	
+	public ReviewController(ReviewService reviewService) {
+		this.reviewService = reviewService;
+	}
 
     // ------------------------------------------------------------------
     // 1) 리뷰 작성
@@ -130,7 +139,7 @@ public class ReviewController {
             example = "42",
             schema = @Schema(type = "integer", format = "int32")
         )
-        @PathVariable int reviewId,
+        @PathVariable("reviewId") int reviewId,
 
         @Valid @org.springframework.web.bind.annotation.RequestBody ReviewUpdateRequest request
     ){
@@ -175,7 +184,7 @@ public class ReviewController {
             example = "42",
             schema = @Schema(type = "integer", format = "int32")
         )
-        @PathVariable int reviewId
+        @PathVariable("reviewId") int reviewId
     ) {
         boolean success = reviewService.deleteReview(userId, reviewId);
         if (success) {
@@ -184,4 +193,18 @@ public class ReviewController {
             return ResponseEntity.status(403).body("본인만 삭제 가능합니다.");
         }
     }
+	
+    // 리뷰 단건 조회
+	@GetMapping("/{reviewId}")
+	public ResponseEntity<?> getReview(
+			@RequestHeader("user-id") Integer userId, 
+			@PathVariable("reviewId") int reviewId
+			) {
+	    ReviewResponseDto response = reviewService.getReviewById(reviewId);
+	    if (response != null) {
+	        return ResponseEntity.ok(response);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
 }
