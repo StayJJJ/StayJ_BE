@@ -3,11 +3,14 @@ package com.backend.dto.request;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 @Data
+@Builder
 public class GuestHouseCreateRequest {
     @NotBlank
     private String name;
@@ -39,6 +42,7 @@ public class GuestHouseCreateRequest {
     private List<RoomRequest> rooms;
 
     @Data
+    @Builder
     public static class RoomRequest {
         @NotBlank
         private String name;

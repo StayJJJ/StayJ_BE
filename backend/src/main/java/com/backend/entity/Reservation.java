@@ -47,8 +47,11 @@ public class Reservation {
     private Room room;
 
     public boolean isOverlapping(LocalDate checkIn, LocalDate checkOut) {
-        // 예약 기간 겹침 여부 판단 (체크아웃 당일은 포함하지 않음)
-        return !(this.checkOutDate.isBefore(checkIn) || this.checkInDate.isAfter(checkOut.minusDays(1)));
+        // 체크아웃 날짜와 체크인 날짜가 같은 경우는 겹치지 않음
+        // 예: 기존 예약 12/15~12/18, 새 예약 12/18~12/20 → 겹치지 않음
+    	
+        return !(this.checkOutDate.isBefore(checkIn) || this.checkOutDate.equals(checkIn) || 
+                 this.checkInDate.isAfter(checkOut) || this.checkInDate.equals(checkOut));
     }
 
     // Relationships
@@ -58,4 +61,12 @@ public class Reservation {
     public void deleteReview() {
     		this.review = null;
     }
+
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
+	public void setReview(Review review) {
+		this.review = review;
+	}
 }
