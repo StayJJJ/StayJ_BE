@@ -38,7 +38,7 @@ public class GuesthouseListController {
             @Parameter(
                 name = "check_in",
                 description = "체크인 날짜 (YYYY-MM-DD). 미입력 시 오늘 날짜",
-                example = "2025-09-01",
+                example = "2025-09-10",
                 schema = @Schema(type = "string", format = "date")
             )
             @RequestParam(name = "check_in", required = false)
@@ -47,7 +47,7 @@ public class GuesthouseListController {
             @Parameter(
                 name = "check_out",
                 description = "체크아웃 날짜 (YYYY-MM-DD). 미입력 시 check_in + 1일",
-                example = "2025-09-02",
+                example = "2025-09-12",
                 schema = @Schema(type = "string", format = "date")
             )
             @RequestParam(name = "check_out", required = false)

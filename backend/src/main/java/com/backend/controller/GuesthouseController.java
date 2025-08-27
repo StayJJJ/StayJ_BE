@@ -35,15 +35,20 @@ public class GuesthouseController {
 	// ---------------------------------------------------------
 	@Operation(summary = "게스트하우스 생성", description = "호스트가 새로운 게스트하우스를 등록합니다. 방 정보까지 함께 생성할 수 있습니다.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "게스트하우스 생성 요청", required = true, content = @Content(schema = @Schema(implementation = GuestHouseCreateRequest.class), examples = @ExampleObject(name = "게스트하우스 생성 예시", value = """
 			{
-			  "name": "제주 힐링하우스",
-			  "description": "바다가 보이는 힐링 게스트하우스입니다.",
-			  "address": "제주특별자치도 제주시 애월읍 해안로 123",
-			  "phone_number": "010-1234-5678",
-			  "photo_id": 123,
-			  "room_count": 2,
+			  "name": "제주 바다안개 하우스",
+			  "description": "바다 전망, 조용한 숙소",
+			  "address": "제주시 애월읍 1-1",
+			  "rating": 0.0,
+			  "photo_id": 1,
+			  "phone_number": "064-700-0001",
+			  "room_count": 1,
 			  "rooms": [
-			    { "name": "오션뷰 룸", "capacity": 2, "price": 50000 },
-			    { "name": "시티뷰 룸", "capacity": 4, "price": 40000 }
+			    {
+			      "name": "스탠다드",
+			      "capacity": 2,
+			      "price": 52000,
+			      "photo_id": 1
+			    }
 			  ]
 			}
 			"""))), responses = {
@@ -54,8 +59,6 @@ public class GuesthouseController {
 	public ResponseEntity<SuccessResponse> createGuesthouse(
 			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId,
 			@Valid @RequestBody GuestHouseCreateRequest request) {
-//		System.out.println("[REQ] " + request);
-//	    System.out.println("[REQ.name] " + request.getName());
 		Integer newId = guesthouseService.createGuestHouseWithRooms(hostId, request);
 		return ResponseEntity.ok(new SuccessResponse(true));
 	}
@@ -84,7 +87,7 @@ public class GuesthouseController {
 			@ApiResponse(responseCode = "404", description = "게스트하우스가 존재하지 않음", content = @Content) })
 	@DeleteMapping("/{guesthouseId}")
 	public ResponseEntity<SuccessResponse> deleteGuesthouse(
-			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "10", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
+			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "1", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
 
 			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		guesthouseService.deleteGuesthouse(guesthouseId, hostId);
@@ -100,7 +103,7 @@ public class GuesthouseController {
 			@ApiResponse(responseCode = "404", description = "게스트하우스가 존재하지 않음", content = @Content) })
 	@GetMapping("/{guesthouseId}/reservations")
 	public ResponseEntity<List<ReservationListItemDto>> getReservationsByGuesthouse(
-			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "10", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
+			@Parameter(name = "guesthouseId", description = "게스트하우스 ID", required = true, example = "1", schema = @Schema(type = "integer", format = "int32")) @PathVariable("guesthouseId") Integer guesthouseId,
 
 			@Parameter(name = "user-id", in = ParameterIn.HEADER, required = true, description = "호스트 사용자 ID", example = "1", schema = @Schema(type = "integer", format = "int32")) @RequestHeader("user-id") Integer hostId) {
 		var list = guesthouseService.getReservationsByGuesthouse(guesthouseId, hostId);

@@ -56,10 +56,10 @@ public class ReservationController {
                     name = "reservation-create",
                     value = "{\n" +
                             "  \"guesthouse_id\": 12,\n" +
-                            "  \"room_id\": 34,\n" +
-                            "  \"check_in\": \"2025-09-01\",\n" +
-                            "  \"check_out\": \"2025-09-03\",\n" +
-                            "  \"people\": 2\n" +
+                            "  \"room_id\": 6,\n" +
+                            "  \"check_in_date\": \"2025-09-10\",\n" +
+                            "  \"check_out_date\": \"2025-09-12\",\n" +
+                            "  \"people_count\": 2\n" +
                             "}"
                 )
             )
@@ -100,7 +100,7 @@ public class ReservationController {
     public ResponseEntity<List<ReservationResponse>> getMyReservations(
         @Parameter(
             name = "user-id", in = ParameterIn.HEADER, required = true,
-            description = "요청 사용자 ID", example = "1",
+            description = "요청 사용자 ID", example = "5",
             schema = @Schema(type = "integer", format = "int32")
         )
         @RequestHeader("user-id") Integer userId
