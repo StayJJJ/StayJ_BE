@@ -4,13 +4,17 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GuestHouseCreateRequest {
     @NotBlank
     private String name;
@@ -43,6 +47,8 @@ public class GuestHouseCreateRequest {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class RoomRequest {
         @NotBlank
         private String name;

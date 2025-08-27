@@ -105,7 +105,7 @@ public class ReviewController {
                     value = """
                     {
                       "rating": 4,
-                      "content": "전반적으로 만족했지만 소음이 조금 있었어요."
+                      "comment": "전반적으로 만족했지만 소음이 조금 있었어요."
                     }
                     """
                 )
@@ -126,7 +126,7 @@ public class ReviewController {
             in = ParameterIn.HEADER,
             required = true,
             description = "요청 사용자 ID",
-            example = "1",
+            example = "6",
             schema = @Schema(type = "integer", format = "int32")
         )
         @RequestHeader("user-id") Integer userId,
@@ -136,7 +136,7 @@ public class ReviewController {
             in = ParameterIn.PATH,
             required = true,
             description = "수정할 리뷰 ID",
-            example = "42",
+            example = "2",
             schema = @Schema(type = "integer", format = "int32")
         )
         @PathVariable("reviewId") int reviewId,

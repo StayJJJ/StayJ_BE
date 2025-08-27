@@ -32,7 +32,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 	//jsp jstl servlet 관련 설정
@@ -66,7 +65,6 @@ dependencies {
     
     // AssertJ (Spring Boot Test Starter에 포함)
     testImplementation 'org.assertj:assertj-core:3.24.2'
-
 }
 
 tasks.named('test') {
