@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.backend.dto.request.LoginRequest;
 import com.backend.dto.request.SignUpRequest;
+import com.backend.dto.response.IdCheckResponseDto;
 import com.backend.dto.response.SuccessResponse;
 import com.backend.dto.response.UserInfoDto;
 import com.backend.dto.response.UserResponse;
@@ -32,6 +33,40 @@ public class UserController {
 	@Autowired
     public UserService userService;
 
+	// 0) 아이디 중복 확인
+	@Operation(
+        summary = "아이디 중복 확인",
+        description = "쿼리 파라미터로 받은 login_id가 사용 가능한지 여부를 반환합니다. " +
+                      "이미 존재하면 false, 사용 가능하면 true 입니다.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "확인 성공",
+                content = @Content(schema = @Schema(implementation = IdCheckResponseDto.class),
+                    examples = {
+                        @ExampleObject(name = "사용 가능", value = "{ \"available\": true }"),
+                        @ExampleObject(name = "이미 존재", value = "{ \"available\": false }")
+                    }
+                )
+            ),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청", content = @Content)
+        }
+    )
+    @GetMapping("/check-id")
+    public ResponseEntity<IdCheckResponseDto> checkId(
+        @Parameter(
+            name = "login_id",
+            description = "중복 확인할 로그인 아이디",
+            required = true,
+            in = ParameterIn.QUERY,
+            example = "hong123"
+        )
+        @RequestParam("login_id") String loginId
+    ) {
+        boolean available = userService.isLoginIdAvailable(loginId);
+        return ResponseEntity.ok(new IdCheckResponseDto(available));
+    }
+	
     // ---------------------------------------------------------
     // 1) 회원가입
     // ---------------------------------------------------------

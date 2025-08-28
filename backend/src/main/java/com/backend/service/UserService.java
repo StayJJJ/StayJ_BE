@@ -15,6 +15,10 @@ public class UserService {
 	@Autowired
 	public UserRepository userRepository;
 	
+	public boolean isLoginIdAvailable(String loginId) {
+	    return !userRepository.existsByLoginId(loginId);
+	}
+	
 	public void signUp(SignUpRequest request) {
 		User user = User.builder()
 		.username(request.getUsername())
