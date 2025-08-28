@@ -51,11 +51,12 @@ public class ReservationInfoService {
 
         List<Room> roomList = guesthouse.getRoomList();
         
-        if (roomAvailableFilter != null && !roomAvailableFilter.isEmpty()) {
-            roomList = roomList.stream()
-                    .filter(room -> roomAvailableFilter.contains(room.getId()))
-                    .collect(Collectors.toList());
-        }
+        // roomAvailable 방만 보여주도록 -> 지금은 다 보여주도록 변경하였음
+//        if (roomAvailableFilter != null && !roomAvailableFilter.isEmpty()) {
+//            roomList = roomList.stream()
+//                    .filter(room -> roomAvailableFilter.contains(room.getId()))
+//                    .collect(Collectors.toList());
+//        }
 
         List<GuestHouseRoomRequest> guestHouseRooms = roomList.stream()
         	    .map(room -> GuestHouseRoomRequest.builder()
