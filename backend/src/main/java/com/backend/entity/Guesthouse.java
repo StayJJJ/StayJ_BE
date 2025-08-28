@@ -65,4 +65,8 @@ public class Guesthouse {
         room.setGuesthouse(this);
         this.roomList.add(room);
     }
+    
+    public void updateRating(Double newRating) {
+    		this.rating = newRating;
+    }
 }

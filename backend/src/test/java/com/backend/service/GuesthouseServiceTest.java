@@ -3,6 +3,7 @@ package com.backend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -311,5 +312,23 @@ class GuesthouseServiceTest {
 
         // Then
         assertThat(result).isEmpty();
+    }
+    
+    @Test
+    public void testUpdateRating() {
+        Integer guesthouseId = 1;
+        Double expectedAverage = 4.5;
+
+        // Repository의 calculateAverageRating이 실제로 값을 반환하도록 설정
+        when(guesthouseRepository.calculateAverageRating(guesthouseId)).thenReturn(expectedAverage);
+
+        // Service 메서드 호출
+        guesthouseService.updateRating(guesthouseId);
+
+        // Repository 메서드가 호출되었는지 검증
+        verify(guesthouseRepository, times(1)).calculateAverageRating(guesthouseId);
+
+        // 만약 updateRating이 내부적으로 값을 사용하여 Guesthouse 엔티티를 업데이트 한다면,
+        // 해당 값도 검증 가능 (추가 로직 필요)
     }
 }

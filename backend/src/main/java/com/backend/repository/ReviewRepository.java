@@ -20,4 +20,12 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
            "WHERE room.guesthouse.id = :guesthouseId " +  // 여기서 guestHouse → guesthouse
            "ORDER BY r.createdAt DESC")
     List<Review> findByGuesthouseId(@Param("guesthouseId") Integer guesthouseId);
+    
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.reservation.room.guesthouse.id = :guesthouseId")
+    Double findAvgRatingByGuesthouseId(@Param("guesthouseId") Integer guesthouseId);
+
+    @Query("SELECT AVG(r.rating) " +
+            "FROM Review r " +
+            "WHERE r.reservation.room.guesthouse.id = :guesthouseId")
+     Double calculateAverageRating(@Param("guesthouseId") Integer guesthouseId);
 }

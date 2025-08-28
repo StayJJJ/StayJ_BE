@@ -1,43 +1,42 @@
 package com.backend.service;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.dto.request.ReviewCreateRequest;
 import com.backend.dto.request.ReviewUpdateRequest;
 import com.backend.dto.response.ReviewResponseDto;
+import com.backend.entity.Guesthouse;
 import com.backend.entity.Reservation;
 import com.backend.entity.Review;
+import com.backend.repository.GuesthouseRepository;
 import com.backend.repository.ReservationRepository;
 import com.backend.repository.ReviewRepository;
 import com.backend.repository.UserRepository;
 
-import org.springframework.web.server.ResponseStatusException;
-import static org.springframework.http.HttpStatus.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
-
-    public ReviewService(ReviewRepository reviewRepository,
-                         ReservationRepository reservationRepository,
-                         UserRepository userRepository) {
-        this.reviewRepository = reviewRepository;
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-    }
+    private final GuesthouseRepository guesthouseRepository;
 
     @Transactional
-    public ReviewResponseDto createReview(Integer userId, ReviewCreateRequest request) {
-//    	System.out.println(request.getReservationId());
-    	
-    	var reservation = reservationRepository.findById(request.getReservationId())
+    public ReviewResponseDto createReview(Integer userId, ReviewCreateRequest request) {    	
+    	Reservation reservation = reservationRepository.findById(request.getReservationId())
     	        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "예약이 존재하지 않습니다."));
 
     	    if (!reservation.getGuest().getId().equals(userId)) {
@@ -49,24 +48,6 @@ public class ReviewService {
     	    if (reviewRepository.existsByReservation(reservation)) {
     	        throw new ResponseStatusException(CONFLICT, "이 예약에 대해 이미 리뷰가 작성되어 있습니다.");
     	    }
-    	
-//        Optional<Reservation> reservationOpt = reservationRepository.findById(request.getReservationId());
-//        if (reservationOpt.isEmpty()) {
-//            throw new IllegalArgumentException("예약이 존재하지 않습니다.");
-//        }
-//        Reservation reservation = reservationOpt.get();
-//
-//        if (!reservation.getGuest().getId().equals(userId)) {
-//            throw new IllegalArgumentException("예약한 사용자만 리뷰 작성 가능");
-//        }
-//
-//        if (reservation.getCheckOutDate().isAfter(LocalDate.now())) {
-//            throw new IllegalStateException("체크아웃 이후에만 리뷰 작성이 가능합니다.");
-//        }
-//
-//        if (reviewRepository.existsByReservation(reservation)) {
-//            throw new IllegalStateException("이 예약에 대해 이미 리뷰가 작성되어 있습니다.");
-//        }
 
         Review review = Review.builder()
                 .reservation(reservation)
@@ -76,6 +57,11 @@ public class ReviewService {
                 .build();
 
         Review savedReview = reviewRepository.save(review);
+        
+        // Reservation의 Rating 업데이트
+        System.out.println("전 = " + reservation.getRoom().getGuesthouse().getRating());
+        updateRating(reservation.getRoom().getGuesthouse().getId());
+        System.out.println("후 = " + reservation.getRoom().getGuesthouse().getRating());
 
         // Builder 패턴으로 DTO 반환
         return ReviewResponseDto.builder()
@@ -85,6 +71,16 @@ public class ReviewService {
                 .comment(savedReview.getComment())
                 .createdAt(savedReview.getCreatedAt())
                 .build();
+    }
+    
+    @Transactional
+    public void updateRating(Integer guesthouseId) {
+        Double avg = reviewRepository.calculateAverageRating(guesthouseId);
+        Guesthouse guesthouse = guesthouseRepository.findById(guesthouseId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "게스트하우스가 존재하지 않습니다."));
+        
+        guesthouse.updateRating(avg != null ? Math.round(avg * 10) / 10.0 : 0.0);
+        guesthouseRepository.save(guesthouse); 
     }
 
     @Transactional
