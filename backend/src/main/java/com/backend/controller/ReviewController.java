@@ -84,7 +84,6 @@ public class ReviewController {
 
         @Valid @org.springframework.web.bind.annotation.RequestBody ReviewCreateRequest request
     ){
-        System.out.println(request);
         ReviewResponseDto response = reviewService.createReview(userId, request);
         return ResponseEntity.ok(response);
     }

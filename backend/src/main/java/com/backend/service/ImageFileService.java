@@ -15,7 +15,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ImageFileService {
-
     private final GuesthouseRepository guesthouseRepository;
     private final RoomRepository roomRepository;
 

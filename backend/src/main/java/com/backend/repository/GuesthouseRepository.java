@@ -9,16 +9,11 @@ import org.springframework.data.repository.query.Param;
 import com.backend.entity.Guesthouse;
 
 public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer> {
-
 	interface GuesthouseSummary {
 		Integer getId();
-
 		String getName();
-
 		Integer getRoomCount();
-
 		Double getRating();
-
 		Integer getPhotoId();
 	}
 
@@ -33,4 +28,9 @@ public interface GuesthouseRepository extends JpaRepository<Guesthouse, Integer>
 			select coalesce(max(g.photoId), 0) from Guesthouse g
 			""")
 	Integer findMaxPhotoId();
+	
+    @Query("SELECT AVG(r.rating) " +
+            "FROM Review r " +
+            "WHERE r.reservation.room.guesthouse.id = :guesthouseId")
+    Double calculateAverageRating(@Param("guesthouseId") Integer guesthouseId);
 }
