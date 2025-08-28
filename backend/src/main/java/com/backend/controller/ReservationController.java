@@ -95,6 +95,7 @@ public class ReservationController {
             )
         )
     })
+    
     @GetMapping("/my")
     public ResponseEntity<List<ReservationResponse>> getMyReservations(
         @Parameter(
