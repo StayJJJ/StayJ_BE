@@ -54,14 +54,11 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
 	providedCompile 'jakarta.platform:jakarta.jakartaee-web-api:8.0.0'
-	
-	// JUnit 5 (Spring Boot Test Starter에 포함되어 있지만 명시적으로 추가 가능)
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
-    
+	    
     // Mockito (Spring Boot Test Starter에 포함)
     testImplementation 'org.mockito:mockito-core:5.3.1'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.3.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     
     // AssertJ (Spring Boot Test Starter에 포함)
     testImplementation 'org.assertj:assertj-core:3.24.2'
