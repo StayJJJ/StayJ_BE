@@ -17,6 +17,7 @@ import com.backend.repository.ReservationRepository;
 import com.backend.repository.RoomRepository;
 import com.backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,27 +32,33 @@ public class ReservationService {
 	@Autowired
 	private final RoomRepository roomRepository;
 	
+	@Transactional
 	public boolean createReservation(Integer userId, ReservationRequest request) {
-		// 1. User, Room 조회
+        // 0) 기초 검증
+        if (request.getPeopleCount() == null || request.getPeopleCount() <= 0) return false;
+        if (request.getCheckInDate() == null || request.getCheckOutDate() == null) return false;
+        if (!request.getCheckInDate().isBefore(request.getCheckOutDate())) return false;
+
+        // 1) 엔티티 조회
         User guest = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // (선택) 방 레코드에 잠금 걸기: RoomRepository에 잠금 메서드 추가 권장 (아래 주석 참고)
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
 
-        // 2. 중복 예약 확인
-        List<Reservation> reservations = reservationRepository.findByRoomId(room.getId());
-        for (Reservation r : reservations) {
-            if (r.isOverlapping(request.getCheckInDate(), request.getCheckOutDate())) {
-                return false; // 중복 예약 있음
-            }
+        // 2) 현재 기간에 이미 예약된 인원 합계 조회
+        int alreadyReserved = reservationRepository.sumPeopleCountForOverlap(
+                room.getId(), request.getCheckInDate(), request.getCheckOutDate());
+
+        int remaining = room.getCapacity() - alreadyReserved;
+
+        // 3) 현재 요청 인원 수용 가능 여부 확인
+        if (request.getPeopleCount() > remaining) {
+            return false; // 정원 초과
         }
 
-        // 3. 인원 수 체크
-        if (request.getPeopleCount() > room.getCapacity()) {
-            return false; // 인원 초과
-        }
-
-        // 4. 예약 저장
+        // 4) 저장
         Reservation reservation = Reservation.builder()
                 .guest(guest)
                 .room(room)
@@ -62,7 +69,7 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
         return true;
-	}
+    }
 	
 	public List<ReservationResponse> getMyReservations(Integer guestId) {
 	    List<Reservation> reservations = reservationRepository.findByGuest_Id(guestId);

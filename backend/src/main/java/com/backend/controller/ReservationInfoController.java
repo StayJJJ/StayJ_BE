@@ -91,6 +91,7 @@ public class ReservationInfoController {
         )
         @RequestParam(value = "room_available", required = false) List<Integer> roomAvailable
     ) {
+    	System.out.println("room: " + roomAvailable);
         var response = reservationInfoService.getGuestHouseRooms(guesthouseId, roomAvailable);
         return ResponseEntity.ok(response);
     }
