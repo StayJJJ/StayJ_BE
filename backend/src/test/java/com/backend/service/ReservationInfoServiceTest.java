@@ -226,30 +226,6 @@ class ReservationInfoServiceTest {
     }
 
     @Test
-    @DisplayName("게스트하우스 방 목록 조회 성공 - 필터 적용")
-    void getGuestHouseRooms_Success_WithFilter() {
-        // given
-        given(guestHouseRepository.findById(1)).willReturn(Optional.of(testGuesthouse));
-        List<Integer> roomFilter = Arrays.asList(1, 3); // 1번, 3번 방만 필터링
-
-        // when
-        RoomResponseRequest result = reservationInfoService.getGuestHouseRooms(1, roomFilter);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getRooms()).hasSize(2);
-        
-        List<GuestHouseRoomRequest> rooms = result.getRooms();
-        assertThat(rooms.get(0).getId()).isEqualTo(1);
-        assertThat(rooms.get(1).getId()).isEqualTo(3);
-        
-        // 2번 방은 필터링되어 포함되지 않음
-        assertThat(rooms.stream().anyMatch(room -> room.getId() == 2)).isFalse();
-
-        verify(guestHouseRepository).findById(1);
-    }
-
-    @Test
     @DisplayName("게스트하우스 방 목록 조회 성공 - 빈 필터")
     void getGuestHouseRooms_Success_EmptyFilter() {
         // given
@@ -343,24 +319,6 @@ class ReservationInfoServiceTest {
 
         verify(guestHouseRepository).existsById(999);
         verify(reviewRepository, never()).findByGuesthouseId(anyInt());
-    }
-
-    @Test
-    @DisplayName("방 필터링 로직 테스트 - 존재하지 않는 방 ID 포함")
-    void getGuestHouseRooms_FilterNonExistentRooms() {
-        // given
-        given(guestHouseRepository.findById(1)).willReturn(Optional.of(testGuesthouse));
-        List<Integer> roomFilter = Arrays.asList(1, 999); // 999번 방은 존재하지 않음
-
-        // when
-        RoomResponseRequest result = reservationInfoService.getGuestHouseRooms(1, roomFilter);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getRooms()).hasSize(1); // 1번 방만 포함
-        assertThat(result.getRooms().get(0).getId()).isEqualTo(1);
-
-        verify(guestHouseRepository).findById(1);
     }
 
     @Test

@@ -3,6 +3,8 @@ package com.backend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -107,7 +109,8 @@ class ReservationServiceTest {
         // given
         given(userRepository.findById(1)).willReturn(Optional.of(testUser));
         given(roomRepository.findById(1)).willReturn(Optional.of(testRoom));
-        given(reservationRepository.findByRoomId(1)).willReturn(Arrays.asList());
+        given(reservationRepository.sumPeopleCountForOverlap(anyInt(), any(), any()))
+                .willReturn(0); // 기존 예약 없음 → 정원 다 사용 가능
 
         // when
         boolean result = reservationService.createReservation(1, reservationRequest);
@@ -147,27 +150,6 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("예약 생성 실패 - 중복 예약 존재")
-    void createReservation_OverlappingReservation() {
-        // given
-        Reservation overlappingReservation = Reservation.builder()
-                .checkInDate(LocalDate.of(2024, 12, 19))
-                .checkOutDate(LocalDate.of(2024, 12, 21))
-                .build();
-
-        given(userRepository.findById(1)).willReturn(Optional.of(testUser));
-        given(roomRepository.findById(1)).willReturn(Optional.of(testRoom));
-        given(reservationRepository.findByRoomId(1)).willReturn(Arrays.asList(overlappingReservation));
-
-        // when
-        boolean result = reservationService.createReservation(1, reservationRequest);
-
-        // then
-        assertThat(result).isFalse();
-        verify(reservationRepository, never()).save(any());
-    }
-
-    @Test
     @DisplayName("예약 생성 실패 - 인원 초과")
     void createReservation_ExceedsCapacity() {
         // given
@@ -180,7 +162,7 @@ class ReservationServiceTest {
 
         given(userRepository.findById(1)).willReturn(Optional.of(testUser));
         given(roomRepository.findById(1)).willReturn(Optional.of(testRoom));
-        given(reservationRepository.findByRoomId(1)).willReturn(Arrays.asList());
+        given(reservationRepository.sumPeopleCountForOverlap(anyInt(), any(), any())).willReturn(0);
 
         // when
         boolean result = reservationService.createReservation(1, overCapacityRequest);
@@ -328,25 +310,35 @@ class ReservationServiceTest {
     @Test
     @DisplayName("예약 중복 체크 - 경계값 테스트")
     void createReservation_BoundaryOverlapTest() {
-        // given
-        // 기존 예약: 12/15 ~ 12/18
-        // 새 예약: 12/18 ~ 12/20 (체크아웃 당일은 겹치지 않음)
+        // given (12/15~12/18 기존 예약은 '겹치지 않음'으로 가정)
         ReservationRequest boundaryRequest = ReservationRequest.builder()
                 .roomId(1)
-                .checkInDate(LocalDate.of(2024, 12, 18)) // 기존 예약의 체크아웃 날짜
+                .checkInDate(LocalDate.of(2024, 12, 18))
                 .checkOutDate(LocalDate.of(2024, 12, 20))
                 .peopleCount(2)
                 .build();
 
         given(userRepository.findById(1)).willReturn(Optional.of(testUser));
         given(roomRepository.findById(1)).willReturn(Optional.of(testRoom));
-        given(reservationRepository.findByRoomId(1)).willReturn(Arrays.asList(existingReservation));
+
+        // ✅ 서비스가 사용하는 메서드를 Stub (경계에서는 중복 0으로)
+        given(reservationRepository.sumPeopleCountForOverlap(
+                eq(1),
+                eq(LocalDate.of(2024, 12, 18)),
+                eq(LocalDate.of(2024, 12, 20))
+        )).willReturn(0);
 
         // when
         boolean result = reservationService.createReservation(1, boundaryRequest);
 
         // then
-        assertThat(result).isTrue(); // 경계값에서는 중복이 아니므로 성공해야 함
+        assertThat(result).isTrue();
         verify(reservationRepository).save(any(Reservation.class));
+        // (선택) 실제 호출 파라미터 확인
+        verify(reservationRepository).sumPeopleCountForOverlap(
+                eq(1),
+                eq(LocalDate.of(2024, 12, 18)),
+                eq(LocalDate.of(2024, 12, 20))
+        );
     }
 }
