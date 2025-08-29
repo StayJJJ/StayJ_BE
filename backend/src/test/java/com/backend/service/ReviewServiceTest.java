@@ -26,9 +26,12 @@ import org.springframework.web.server.ResponseStatusException;
 import com.backend.dto.request.ReviewCreateRequest;
 import com.backend.dto.request.ReviewUpdateRequest;
 import com.backend.dto.response.ReviewResponseDto;
+import com.backend.entity.Guesthouse;
 import com.backend.entity.Reservation;
 import com.backend.entity.Review;
+import com.backend.entity.Room;
 import com.backend.entity.User;
+import com.backend.repository.GuesthouseRepository;
 import com.backend.repository.ReservationRepository;
 import com.backend.repository.ReviewRepository;
 import com.backend.repository.UserRepository;
@@ -44,10 +47,15 @@ class ReviewServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private GuesthouseRepository guesthouseRepository;
+    
     @InjectMocks
     private ReviewService reviewService;
 
     private User guestUser;
+    private Guesthouse guesthouse;
+    private Room room;
     private Reservation reservation;
 
     @BeforeEach
@@ -55,9 +63,20 @@ class ReviewServiceTest {
         guestUser = new User();
         guestUser.setId(1);
 
+        guesthouse = Guesthouse.builder()
+                .id(1)
+                .name("My Guesthouse")
+                .build();
+
+        room = Room.builder()
+                .id(1)
+                .guesthouse(guesthouse)
+                .build();
+
         reservation = Reservation.builder()
                 .id(100)
                 .guest(guestUser)
+                .room(room)  // <-- assign the room here
                 .checkOutDate(LocalDate.now().minusDays(1)) // 체크아웃 완료된 상태
                 .build();
     }
@@ -79,6 +98,7 @@ class ReviewServiceTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+        when(guesthouseRepository.findById(guesthouse.getId())).thenReturn(Optional.of(guesthouse));
         when(reviewRepository.save(any(Review.class))).thenReturn(savedReview);
 
         // when
